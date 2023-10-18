@@ -15,7 +15,6 @@ def getBuckets(T):
         start += count[c]
     return buckets
 
-
 def sais(T):
     t = ["_"] * len(T)
     
@@ -106,6 +105,7 @@ def sais(T):
 
     return SA
 
+# Aqui empieza el codigo
 
 def search(string, pattern, SA):
     left, right = 0, len(string) - 1
@@ -147,7 +147,9 @@ def read_file_content(filename):
                 text += c
     return text
 
-
+def print_memory_usage():
+    mem_usage = memory_usage(-1, interval=0.1)
+    print(f"Memoria usada: {round(mem_usage[0],3)} [MiB]")
     
 def write_suffix_array(SA, outputSA):
     #Se copia el suffix array al archivo indicado
@@ -161,10 +163,9 @@ def write_total_ocurrences(ocurrences, outputOcurrences):
         with open(outputOcurrences, 'w', encoding='utf-8') as output_file:
             output_file.write(str(ocurrences))
         print("Arreglo de las posiciones de la cadena y sus ocurrencias creado satisfactoriamente")
-
+    
 
 def main():
-    
     
     #Inicio del tiempo de ejecución del algoritmo
     startTime = time.time()
@@ -185,7 +186,6 @@ def main():
     T = [ord(c) for c in textSA]
     SA = sais(T)
     
-    
     #Se crea la ruta donde se copia el suffix array
     outputSA = os.path.join("Output_Python", "suffix_array_output_python.txt")
     
@@ -193,8 +193,20 @@ def main():
     outputOcurrences = os.path.join("Output_Python", "ocurrences_index_python.txt")
     
     #Regresa el numero de ocurrencias del string indicado
-    ocurrences = find_all_occurrences(textSA, stringS2S, SA)  
+    ocurrences = find_all_occurrences(textSA, stringS2S, SA)
+    
 
     write_suffix_array(SA, outputSA)
         
     write_total_ocurrences(ocurrences, outputOcurrences)
+
+    print("Total de Ocurrencias:", len(ocurrences))   
+    
+    
+    #Fin del tiempo de ejecución del algoritmo
+    endTime = time.time()
+    print_memory_usage()
+    print("Duración del programa en:", round(endTime-startTime,3), "Segundos")
+    
+    
+main()
