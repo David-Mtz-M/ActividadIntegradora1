@@ -1,7 +1,17 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <cctype>
+#include <cstring>
+#include <algorithm>
+#include <chrono>
+#include <cstring>
+#include <vector>
+#include <map>
+#include <sys/resource.h>
+#include <iomanip>
 
 using namespace std;
-
 
 bool equalSubarrays(const vector<int> &T, int start1, int end1, int start2, int end2) {
     if (end1 - start1 != end2 - start2) {
@@ -168,11 +178,111 @@ vector<int> sais(const vector<int> &T) {
     return SA;
 }
 
+int search(const string &text, const string &pattern, const vector<int> &SA) {
+    int left = 0;
+    int right = text.length() - 1;
+    int first_occurrence = -1;
+
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        string suffix = text.substr(SA[mid]);
+        if (suffix.compare(0, pattern.length(), pattern) == 0) {
+            first_occurrence = mid;
+            right = mid - 1; 
+        }
+        else if (pattern < suffix) {
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+
+    return first_occurrence;
+}
+
+vector<int> find_all_occurrences(const string &text, const string &pattern, const vector<int> &SA) {
+    int firstOccurrence = search(text, pattern, SA);
+    if (firstOccurrence == -1) {
+        return vector<int>(1, -1);
+    }
+    int i = firstOccurrence;
+    vector<int> occurrences;
+    while (text.substr(SA[i]).compare(0, pattern.length(), pattern) == 0) {
+        occurrences.push_back(SA[i]);
+        i++;
+    }
+    sort(occurrences.begin(), occurrences.end());
+    return occurrences;
+}
+
+string read_file_content(const string &filename) {
+    ifstream inputFile(filename);
+    string text;
+    char c;
+    while (inputFile.get(c)) {
+        if (isalpha(c))
+            text += toupper(c);
+    }
+    inputFile.close();
+    return text;
+}
+
+void print_memory_usage() {
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    long memory_usage = usage.ru_maxrss;
+    double memory_usage_mib = static_cast<double>(memory_usage) / 1024;
+    cout << "Memory used: " << fixed << setprecision(3) << memory_usage_mib << " MiB" << endl;
+}
+
+void write_suffix_array(const vector<int> &SA, const string &outputSA_filename) {
+    ofstream outputFile(outputSA_filename);
+    outputFile << "[" << SA[0];
+    for (int i = 1; i < SA.size(); i++)
+        outputFile << ", " << SA[i];
+    outputFile << "]";
+    outputFile.close();
+    cout << "Arreglo de sufijos creado satisfactoriamente"  << endl;
+}
+
+void write_total_occurrences(const vector<int> &occurrences, const string &outputOcurrences_filename) {
+    ofstream outputFile(outputOcurrences_filename);
+    outputFile << "[" << occurrences[0];
+    for (int i = 1; i < occurrences.size(); i++)
+        outputFile << ", " << occurrences[i];
+    outputFile << "]";
+    outputFile.close();
+    cout << "Arreglo de las posiciones de la cadena y sus ocurrencias creado satisfactoriamente" << endl;
+}
 
 int main() {
+    auto start_time = chrono::high_resolution_clock::now();
+    string inputSA_filename = "Libros/one.txt";
+    string outputSA_filename = "Output_CPlusPlus/outputSA_Cpp.txt";
+    string textSA = read_file_content(inputSA_filename);
+    textSA += '$';
 
+    vector<int> T(textSA.begin(), textSA.end());
 
+    vector<int> SA = sais(T);
 
+    write_suffix_array(SA, outputSA_filename);
+
+    string inputS2S_filename = "searchString.txt";
+    string outputS2S_filename = "Output_CPlusPlus/outputS2S_Cpp.txt";
+    string textS2S = read_file_content(inputS2S_filename);
+
+    vector<int> occurrences = find_all_occurrences(textSA, textS2S, SA);
+
+    write_total_occurrences(occurrences, outputS2S_filename);
+    cout << "Number of occurrences: " << occurrences.size() << endl;
+
+    auto end_time = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_time = end_time - start_time;
+    cout << "Execution time: " << elapsed_time.count() << " seconds" << endl;
+
+    print_memory_usage();
 
     return 0;
 }
