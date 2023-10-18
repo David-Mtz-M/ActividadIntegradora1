@@ -257,32 +257,35 @@ void write_total_occurrences(const vector<int> &occurrences, const string &outpu
 }
 
 int main() {
-    auto start_time = chrono::high_resolution_clock::now();
-    string inputSA_filename = "Libros/one.txt";
-    string outputSA_filename = "Output_CPlusPlus/outputSA_Cpp.txt";
-    string textSA = read_file_content(inputSA_filename);
+    auto startTime = chrono::high_resolution_clock::now();
+    string inputBook = "Libros/one.txt";
+    string outputSA = "Output_CPlusPlus/outputSA_Cpp.txt";
+    string stringPatternInput = "searchString.txt";
+    string stringS2S = read_file_content(stringPatternInput);
+    string textSA = read_file_content(inputBook);
     textSA += '$';
 
     vector<int> T(textSA.begin(), textSA.end());
 
     vector<int> SA = sais(T);
 
-    write_suffix_array(SA, outputSA_filename);
+    write_suffix_array(SA, outputSA);
 
     string inputS2S_filename = "searchString.txt";
-    string outputS2S_filename = "Output_CPlusPlus/outputS2S_Cpp.txt";
+    string outputOcurrences = "Output_CPlusPlus/outputS2S_Cpp.txt";
     string textS2S = read_file_content(inputS2S_filename);
 
-    vector<int> occurrences = find_all_occurrences(textSA, textS2S, SA);
+    vector<int> ocurrences = find_all_occurrences(textSA, textS2S, SA);
 
-    write_total_occurrences(occurrences, outputS2S_filename);
-    cout << "Number of occurrences: " << occurrences.size() << endl;
+    write_total_occurrences(ocurrences, outputOcurrences);
+    cout << "Total de Ocurrencias: " << ocurrences.size() << endl;
 
-    auto end_time = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_time = end_time - start_time;
+    auto endTime = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_time = endTime - startTime;
     cout << "Execution time: " << elapsed_time.count() << " seconds" << endl;
 
     print_memory_usage();
 
     return 0;
 }
+
