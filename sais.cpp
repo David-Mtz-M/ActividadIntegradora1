@@ -233,7 +233,7 @@ void print_memory_usage() {
     getrusage(RUSAGE_SELF, &usage);
     long memory_usage = usage.ru_maxrss;
     double memory_usage_mib = static_cast<double>(memory_usage) / 1024;
-    cout << "Memory used: " << fixed << setprecision(3) << memory_usage_mib << " MiB" << endl;
+    cout << "Memoria usada: " << fixed << setprecision(3) << memory_usage_mib << " [MiB]" << endl;
 }
 
 void write_suffix_array(const vector<int> &SA, const string &outputSA_filename) {
@@ -282,7 +282,7 @@ int main() {
 
     auto endTime = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_time = endTime - startTime;
-    cout << "Execution time: " << elapsed_time.count() << " seconds" << endl;
+    cout << "Duración del programa en: " << elapsed_time.count() << " segundos" << endl;
 
     print_memory_usage();
 
