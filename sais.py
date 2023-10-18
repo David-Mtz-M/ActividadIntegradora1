@@ -1,4 +1,5 @@
-
+import time
+import os
 
 def getBuckets(T):
     count = {}
@@ -101,3 +102,50 @@ def sais(T):
                 SA[buckets[symbol][1] - revoffset] = SA[i] - 1
 
     return SA
+
+
+def search(string, pattern, SA):
+    left, right = 0, len(string) - 1
+    first_occurrence = -1
+
+    while left <= right:
+        mid = (left + right) // 2
+        suffix = string[SA[mid] :]
+        if suffix.startswith(pattern):
+            first_occurrence = mid
+            right = mid - 1
+        elif pattern < suffix:
+            right = mid - 1
+        else:
+            left = mid + 1
+
+    return first_occurrence
+
+def find_all_occurrences(string, pattern, SA):
+    firstOccurrence = search(string, pattern, SA)
+    if firstOccurrence == -1:
+        return []
+    i = firstOccurrence
+    occurrences = []
+    while(string[SA[i]:].startswith(pattern)):
+        occurrences.append(SA[i])
+        i += 1
+    occurrences.sort()
+    return occurrences
+
+
+
+
+def main():
+    
+    
+    #Inicio del tiempo de ejecución del algoritmo
+    startTime = time.time()
+
+    #Se crea la ruta donde se lee el libro
+    inputBook = os.path.join("Libros", "one.txt")
+    
+    
+    #Variable que guarda el nombre del archivo donde se haya el string que sera usando en la busqueda de ocurrencias dentro del suffix array
+    stringPatternInput = "searchString.txt"
+    
