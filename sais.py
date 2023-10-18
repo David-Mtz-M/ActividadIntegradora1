@@ -1,6 +1,9 @@
 import time
 import os
 
+from unidecode import unidecode
+from memory_profiler import memory_usage
+
 def getBuckets(T):
     count = {}
     buckets = {}
@@ -133,7 +136,31 @@ def find_all_occurrences(string, pattern, SA):
     occurrences.sort()
     return occurrences
 
+def read_file_content(filename):
+    text = ''
+    with open(filename, 'r', encoding='utf-8') as file:
+        file_text = file.read()
+        for c in file_text:
+            if c.isalpha():
+                c = c.upper()
+                c = unidecode(c)
+                text += c
+    return text
 
+
+    
+def write_suffix_array(SA, outputSA):
+    #Se copia el suffix array al archivo indicado
+    if SA:
+        with open(outputSA, 'w', encoding='utf-8') as output_file:
+            output_file.write(str(SA))
+        print("Arreglo de sufijos creado satisfactoriamente")
+        
+def write_total_ocurrences(ocurrences, outputOcurrences):
+    if len(ocurrences) > 0:
+        with open(outputOcurrences, 'w', encoding='utf-8') as output_file:
+            output_file.write(str(ocurrences))
+        print("Arreglo de las posiciones de la cadena y sus ocurrencias creado satisfactoriamente")
 
 
 def main():
@@ -149,3 +176,25 @@ def main():
     #Variable que guarda el nombre del archivo donde se haya el string que sera usando en la busqueda de ocurrencias dentro del suffix array
     stringPatternInput = "searchString.txt"
     
+    #Variable que guarda la cadena de texto a ser buscada en el suffix array
+    stringS2S = read_file_content(stringPatternInput)
+    
+    #Se crea el suffix array del libro leido
+    textSA = read_file_content(inputBook)+"$"
+    
+    T = [ord(c) for c in textSA]
+    SA = sais(T)
+    
+    
+    #Se crea la ruta donde se copia el suffix array
+    outputSA = os.path.join("Output_Python", "suffix_array_output_python.txt")
+    
+    #Se crea la ruta donde se copian los indices de las ocurrencias del string dado dentro del suffix array creado previamente
+    outputOcurrences = os.path.join("Output_Python", "ocurrences_index_python.txt")
+    
+    #Regresa el numero de ocurrencias del string indicado
+    ocurrences = find_all_occurrences(textSA, stringS2S, SA)  
+
+    write_suffix_array(SA, outputSA)
+        
+    write_total_ocurrences(ocurrences, outputOcurrences)
